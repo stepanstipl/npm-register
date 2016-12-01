@@ -2,12 +2,11 @@
 
 const r = require('koa-router')()
 const user = require('../lib/user')
-const parse = require('co-body')
 const middleware = require('../middleware')
 
 // login
 r.put('/-/user/:user', function * () {
-  let auth = yield user.authenticate(yield parse(this))
+  let auth = yield user.authenticate(yield this)
   if (auth) {
     this.status = 201
     this.body = {token: auth}

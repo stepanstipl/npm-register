@@ -77,7 +77,9 @@ If anything else doesn't work, please submit an issue so we can fix it, or at le
 Authentication
 --------------
 
-npm-register uses an htpasswd file for authentication and stores tokens in S3. To set this up, first create an htpasswd file, then upload it to `/htpasswd` in your S3 bucket or your local file system:
+### htpasswd
+
+By default npm-register uses an htpasswd file for authentication and stores tokens in S3. To set this up, first create an htpasswd file, then upload it to `/htpasswd` in your S3 bucket or your local file system:
 
 ```
 $ aws s3 cp s3://S3BUCKET/htpasswd ./htpasswd
@@ -98,4 +100,23 @@ dickeyxxx
 
 This stores the credentials in `~/.npmrc`. You can now use `npm publish` to publish packages.
 
-**NOTE**: Because the original use-case for having private packages was a little strange, right now you need to be authenticated to upload a private package, but once they are in the registry anyone can install them (but they would have to know the name of it). Comment on https://github.com/dickeyxxx/npm-register/issues/1 if you'd like to see better functionality around this.
+### ssl_header
+You can enable ssl auth when uploading private packages by setting `NPM_REGISTER_AUTH` to `ssl_header`. This is useful for example when you deploy npm-register behind nginx with configured client authentication via client certificates. This expects http header (set by `NPM_REGISTER_AUTH_SSL_DN_HEADER` to contain user's DN string populated by webserver (nginx). Optionally use can specify list of OUs that DN string has to match in `NPM_REGISTER_AUTH_SSL_REQUIRE_OUS`.
+
+Set your nginx tor require SSL client cert and to populate "X-SSL-Client-DN" header:
+```
+# Client auth
+ssl_verify_client on;
+ssl_verify_depth 2;
+ssl_client_certificate /etc/nginx/certs/df-client-ca-bundle.pem;
+
+# Populate SSL header
+proxy_set_header  X-SSL-Client-DN   $ssl_client_s_dn;
+```
+
+And following env. variables to use the header and require membership in one of specified OUs:
+```
+NPM_REGISTER_AUTH="ssl_header"
+NPM_REGISTER_AUTH_SSL_DN_HEADER="X-SSL-Client-DN"
+NPM_REGISTER_AUTH_SSL_REQUIRE_OUS="backend-team,admins"
+```

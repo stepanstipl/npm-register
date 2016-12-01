@@ -5,6 +5,9 @@
   "repository": "https://github.com/dickeyxxx/npm-register",
   "keywords": ["node", "npm"],
   "env": {
+    "NPM_REGISTER_AUTH": "",
+    "NPM_REGISTER_AUTH_SSL_DN_HEADER": "X-SSL-Client-DN",
+    "NPM_REGISTER_AUTH_SSL_REQUIRE_OUS": "",
     "NPM_REGISTER_STORAGE": "s3",
     "AWS_ACCESS_KEY_ID": "",
     "AWS_SECRET_ACCESS_KEY": "",
