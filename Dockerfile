@@ -1,17 +1,7 @@
-FROM alpine:3.4
-MAINTAINER Jeff Dickey
+FROM mhart/alpine-node:7.2
 
-# Install NodeJS and node-gyp deps
-RUN apk --no-cache add \
-        g++ \
-        gcc \
-        make \
-        bash \
-        gnupg \
-        paxctl \
-        python \
-        nodejs \
-        linux-headers
+COPY . /srv/npm-register
+WORKDIR /srv/npm-register
 
 # Create user and group
 RUN addgroup -S register \
@@ -21,11 +11,19 @@ RUN addgroup -S register \
         -G register \
         register
 
-# Deploy application
-COPY . /srv/npm-register
-WORKDIR /srv/npm-register
-RUN npm install \
-    && chown -R register:register .
+RUN apk --no-cache add python \
+                       gcc \
+                       make \
+                       g++ \
+    && npm install bcrypt \
+    && npm install \
+    && chown -R register:register . \
+    && apk del python \
+               gcc \
+               make \
+               g++ \
+    && rm -rf /tmp/* /var/cache/apk/* /root/.npm /root/.node-gyp \
+              /usr/lib/node_modules/npm/man /usr/lib/node_modules/npm/doc /usr/lib/node_modules/npm/html
 
 # Share storage volume
 ENV NPM_REGISTER_FS_DIRECTORY /data
@@ -33,7 +31,8 @@ VOLUME /data
 
 # Start application
 EXPOSE 3000
-USER register
+
+#USER register
 ENV NODE_ENV production
 CMD ["npm", "start"]
 

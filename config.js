@@ -18,6 +18,13 @@ module.exports = {
   s3: {
     bucket: env.AWS_S3_BUCKET,
     region: env.AWS_DEFAULT_REGION
+  },
+  auth: {
+    type: env.NPM_REGISTER_AUTH,
+    ssl: {
+      header: env.REGISTER_AUTH_SSL_HEADER || 'X-SSL-Client-DN',
+      ous: env.REGISTER_AUTH_SSL_OUS || ''
+    }
   }
 }
 

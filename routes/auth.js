@@ -6,7 +6,7 @@ const middleware = require('../middleware')
 
 // login
 r.put('/-/user/:user', function * () {
-  let auth = yield user.authenticate(yield this)
+  let auth = yield user.authenticate(this)
   if (auth) {
     this.status = 201
     this.body = {token: auth}
