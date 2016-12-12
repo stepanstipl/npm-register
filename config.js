@@ -22,8 +22,8 @@ module.exports = {
   auth: {
     type: env.NPM_REGISTER_AUTH,
     ssl: {
-      header: env.REGISTER_AUTH_SSL_HEADER || 'X-SSL-Client-DN',
-      ous: env.REGISTER_AUTH_SSL_OUS || ''
+      header: env.NPM_REGISTER_AUTH_SSL_HEADER || 'X-SSL-Client-DN',
+      ous: env.NPM_REGISTER_AUTH_SSL_OUS || ''
     }
   }
 }
